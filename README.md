@@ -47,9 +47,9 @@ Depending on the type given, the Multiple Choice options will be rendered.
 This is data which will be passed as it is, this is left for developer to deal with. One possible use case would be to pass custom data for google analytics.  
 **4. checkbox-json**
 This would consist of additonal questions which you want to ask, the format for the same is as follows [here](https://github.com/virtual-labs/ph3-lab-mgmt/blob/plugin/bug-report-wc/assets_plugins/json/bug-report-questions.js)
-**5. button_style**
-You need to add styling to this attribute if you would like to add css to bug report button
-**6. position**
+**5. button_style**  
+You need to add styling to this attribute if you would like to add css to bug report button.  
+**6. position**  
 This can be either of:  
   * top
   * left
@@ -57,10 +57,10 @@ This can be either of:
   * right
   * top left
   * bottom right etc
-If you want to add your own positioning, set position to ```override``` and add position css to style normally. (this is shown in example above)
-**7. custom_button_class**
-Similar to button_style, but in the case where you want button to follow styling from a class, pass the class name here.  
+If you want to add your own positioning, set position to ```override``` and add position css to style normally. (this is shown in example above)  
 
+**7. custom_button_class**  
+Similar to button_style, but in the case where you want button to follow styling from a class, pass the class name here.  
 
 ## Events
 1. ```bugreport_success``` event is raised on suceessful submission, this can be handled however developer wants.  
