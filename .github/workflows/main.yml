@@ -1,5 +1,9 @@
 name: deploy to lambda
-on: [push]
+on: 
+  push:
+    branches: 
+	- backend
+
 jobs:
   deploy_source:
     name: build and deploy lambda
@@ -29,6 +33,6 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: us-east-2
+          aws_region: ap-south-1
           function_name: vleads-bug-report
           zip_file: ./server/bundle.zip

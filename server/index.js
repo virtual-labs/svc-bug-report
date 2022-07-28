@@ -49,7 +49,7 @@ exports.handler = async (event) => {
     let imageName = context.developer_institute + date.toString() + ".png";
     result = await uploadImage(event.img, imageName);
     imageUrl =
-      "https://raw.githubusercontent.com/vjspranav/TestIssuesRepo/main/" +
+      "https://raw.githubusercontent.com/virtual-labs/bugs-virtual-labs/main/" +
       imageName;
   }
   let body =
