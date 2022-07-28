@@ -1,8 +1,7 @@
 name: deploy to lambda
 on: 
   push:
-    branches: 
-	- backend
+    branches: [backend]
 
 jobs:
   deploy_source:
