@@ -41,7 +41,7 @@ async function postData(url = "", data = {}) {
     method: "POST",
     cache: "no-cache",
     headers: {
-      "X-Api-Key": "wBtn7JUmMYalFiBXKgS0mCvJ6iU3qtK60yAYrG10",
+      "X-Api-Key": "dKLwHjAj1759ytPPXu3H65ZFp9aoZFor4Xv4Fc4v",
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data), // body data type must match "Content-Type" header
@@ -76,7 +76,7 @@ const submit_bug_report = async (
       description
   );
   let response = await postData(
-    "https://uyvac0qyuh.execute-api.us-east-2.amazonaws.com/test/",
+    "https://sj99le0gyb.execute-api.ap-south-1.amazonaws.com/dev/",
     data
   );
   console.log(response);
