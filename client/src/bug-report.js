@@ -274,9 +274,10 @@ customElements.define(
             console.log("Response is: " + res);
             if (res.status) {
               if (res.status === 200 || res.status === 201) {
-                const event = new CustomEvent("submitted", {
+                const event = new CustomEvent("vl-bug-report", {
                   detail: {
                     title: bug_info["title"],
+                    issues: bug_info["issues"],
                     status: res.status,
                     message: "Bug Reported Successfully",
                   },
@@ -286,7 +287,7 @@ customElements.define(
                 shadowRoot.dispatchEvent(event);
                 // alert("Bug report submitted successfully");
               } else {
-                const event = new CustomEvent("submitted", {
+                const event = new CustomEvent("vl-bug-report", {
                   detail: {
                     title: bug_info["title"],
                     status: res.status,
@@ -298,7 +299,7 @@ customElements.define(
                 shadowRoot.dispatchEvent(event);
               }
             } else {
-              const event = new CustomEvent("submitted", {
+              const event = new CustomEvent("vl-bug-report", {
                 detail: {
                   title: bug_info["title"],
                   status: res.status,
