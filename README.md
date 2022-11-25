@@ -1,6 +1,7 @@
 # SVC Bug Report WebComponent for Virtual Labs
 This repo contains the code for bug report web component for virtual labs, which can be used in any HTML webpage.  
 The web component takes certain inputs and returns an event on success which can be handled however the developer would like.  
+
 ## Features
 The following are features which are easily extendible:
 * User can select from a preset options pased on page type.
@@ -64,6 +65,12 @@ Similar to button_style, but in the case where you want button to follow styling
 
 ## Events
 1. ```bugreport_success``` event is raised on suceessful submission, this can be handled however developer wants.  
+
+## To Move to Production
+1. For moving the bug report from testing to deployment please remove the if condition from the following two files
+   1. https://github.com/virtual-labs/ph3-lab-mgmt/blob/master/templates/partials/bug-report-mobile.handlebars 
+   2. https://github.com/virtual-labs/ph3-lab-mgmt/blob/master/templates/partials/header.handlebars#L16
+2. This will build bug report in all stages of deployment.
 
 ## TODO
 Host the wc branch on github pages
