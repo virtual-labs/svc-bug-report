@@ -1,9 +1,8 @@
 var screenshotVideo;
 
-class Screenshot {
+export default class Screenshot {
     constructor(args){
         this.args = args;
-
         if (typeof navigator.mediaDevices.getDisplayMedia == 'function'){
             if (! screenshotVideo){
                 screenshotVideo = document.createElement("video");
@@ -46,8 +45,9 @@ class Screenshot {
         }
     }
 
-    takeScreenshot(){
-
+    async takeScreenshot(){
+        // wait for 2 seconds to make sure the video is ready
+        await new Promise(resolve => setTimeout(resolve, 500));
         const canvas = document.createElement("canvas");
         canvas.width = screenshotVideo.clientWidth;
         canvas.height = screenshotVideo.clientHeight;

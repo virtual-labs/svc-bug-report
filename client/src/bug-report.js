@@ -1,4 +1,5 @@
 import loadHTML from "./template/loadHTML.js";
+import Screenshot from "./screenshot.js";
 import "./template/html2canvas.js";
 
 // Add jsdoc comment for function
@@ -356,8 +357,9 @@ customElements.define(
       new Screenshot({success: img => {
         b64 = img.src;
         console.log(b64);
-        image_container.innerHTML = "";
-        image_container.appendChild(img);
+        image_container.innerHTML = `<img src="${b64}" alt="Screenshot" style="width: 100%; height: 100%; object-fit: contain;"/>`;
+        // image_container.innerHTML = "";
+        // image_container.appendChild(img);
         shadowRoot
         .getElementById("ss-checkbox")
         .addEventListener("click", function () {
