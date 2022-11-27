@@ -353,25 +353,20 @@ customElements.define(
 
     async addScreenshot(shadowRoot, b64) {
       const image_container = shadowRoot.getElementById("image-container");
-      const opts = {
-        logging: true,
-        useCORS: true,
-      };
-      b64 = await html2canvas(document.body, opts).then(function (canvas) {
-        canvas.id = "image-canva";
+      new Screenshot({success: img => {
+        b64 = img.src;
+        console.log(b64);
         image_container.innerHTML = "";
-        image_container.appendChild(canvas);
-        let dataURL = canvas.toDataURL();
-        b64 = dataURL.split(",")[1];
-        return b64;
-      });
-      shadowRoot
+        image_container.appendChild(img);
+        shadowRoot
         .getElementById("ss-checkbox")
         .addEventListener("click", function () {
           shadowRoot.getElementById("image-container").style.display =
             shadowRoot.getElementById("ss-checkbox").checked ? "block" : "none";
           shadowRoot.getElementById("image-canva").style["height"] = "auto";
         });
+      }})
+      console.log(b64);
       return b64;
     }
   }
