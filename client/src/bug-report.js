@@ -1,6 +1,15 @@
 import loadHTML from "./template/loadHTML.js";
 import "./template/html2canvas.js";
 
+// Add jsdoc comment for function
+
+/**
+ * This function gets the current date and time
+ * @returns {string} The current date and time
+ * @example
+ * getDateTime()
+ * // => "2020-10-10 10:10:10"
+ */
 function getDateTime() {
   const monthNames = [
     "January",
@@ -36,6 +45,12 @@ function getDateTime() {
   return date;
 }
 
+/**
+ * This function posts data to the server, which adds bug to github issues
+ * @param {string} url 
+ * @param {string} data 
+ * @returns {Promise}
+ */
 async function postData(url = "", data = {}) {
   const res = await fetch(url, {
     method: "POST",
@@ -50,6 +65,15 @@ async function postData(url = "", data = {}) {
   // return response.json(); // parses JSON response into native JavaScript objects
 }
 
+/**
+ * This function creates the bug report and posts it to the server
+ * @param {string} title
+ * @param {string} context_info (VLABS Specific)
+ * @param {string} list of issues
+ * @param {b64} screenshot
+ * @param {string} description
+ * @returns {Promise}
+ */   
 const submit_bug_report = async (
   title,
   context_info,
@@ -83,9 +107,20 @@ const submit_bug_report = async (
   return response;
 };
 
+/**
+ * Creating a bug report element
+ */
 customElements.define(
   "bug-report",
+  /**
+   * This class creates a bug report element
+   * @extends HTMLElement
+   */
   class extends HTMLElement {
+    /**
+     * This initializes the bug report element
+     * @constructor
+     */
     constructor() {
       super(); // always call super() first in the constructor.
       this.b64 = "";
