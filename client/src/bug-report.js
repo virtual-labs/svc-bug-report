@@ -317,6 +317,11 @@ customElements.define(
     }
 
     async addScreenshot(shadowRoot, b64) {
+      // Find all iframes in page and log
+      const iframes = document.querySelectorAll("iframe");
+      iframes.forEach((iframe) => {
+        console.log("if-1: ", iframe);
+      });
       const image_container = shadowRoot.getElementById("image-container");
       const opts = {
         logging: true,
@@ -329,6 +334,18 @@ customElements.define(
         let dataURL = canvas.toDataURL();
         b64 = dataURL.split(",")[1];
         return b64;
+      });
+      // Do the above for all iframes
+      iframes.forEach(async (iframe) => {
+        console.log("if-2: ", iframe);
+        const iframe_b64 = await html2canvas(iframe, opts).then(function (canvas) {
+          canvas.id = "image-canva";
+          // image_container.innerHTML = "";
+          image_container.appendChild(canvas);
+          let dataURL = canvas.toDataURL();
+          b64 = dataURL.split(",")[1];
+          return b64;
+        })
       });
       shadowRoot
         .getElementById("ss-checkbox")

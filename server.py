@@ -12,8 +12,10 @@ class MyHTTPRequestHandler(server.SimpleHTTPRequestHandler):
 
     def send_my_headers(self):
         # Set origin isolation
-        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
-        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        # self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
+        # self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        # Access control allow origin
+        self.send_header("Access-Control-Allow-Origin", "*")
 
 
 if __name__ == '__main__':
