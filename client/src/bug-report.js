@@ -1,6 +1,10 @@
 import loadHTML from "./template/loadHTML.js";
 import "./template/html2canvas.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"
 
+console.log(domtoimage);
+
+// console.log(domtoimage);
 function getDateTime() {
   const monthNames = [
     "January",
@@ -82,6 +86,10 @@ const submit_bug_report = async (
   console.log(response);
   return response;
 };
+
+// Add script "https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"
+let script = document.createElement("script");
+document.body.appendChild(script);  
 
 customElements.define(
   "bug-report",
@@ -317,35 +325,25 @@ customElements.define(
     }
 
     async addScreenshot(shadowRoot, b64) {
-      // Find all iframes in page and log
-      const iframes = document.querySelectorAll("iframe");
-      iframes.forEach((iframe) => {
-        console.log("if-1: ", iframe);
-      });
       const image_container = shadowRoot.getElementById("image-container");
-      const opts = {
-        logging: true,
-        useCORS: true,
-      };
-      b64 = await html2canvas(document.body, opts).then(function (canvas) {
-        canvas.id = "image-canva";
-        image_container.innerHTML = "";
-        image_container.appendChild(canvas);
-        let dataURL = canvas.toDataURL();
-        b64 = dataURL.split(",")[1];
-        return b64;
-      });
-      // Do the above for all iframes
-      iframes.forEach(async (iframe) => {
-        console.log("if-2: ", iframe);
-        const iframe_b64 = await html2canvas(iframe, opts).then(function (canvas) {
-          canvas.id = "image-canva";
-          // image_container.innerHTML = "";
-          image_container.appendChild(canvas);
-          let dataURL = canvas.toDataURL();
-          b64 = dataURL.split(",")[1];
-          return b64;
-        })
+      console.log("Adding screenshot");
+      // b64 = await domtoimage
+      //   .toPng(document.body)
+      //   .then(function (dataUrl) {
+      //     var img = new Image();
+      //     img.src = dataUrl;
+      //     image_container.innerHTML = "";
+      //     image_container.appendChild(img);
+      //     return dataUrl;
+      //   })
+      //   .catch(function (error) {
+      //     console.error("oops, something went wrong!", error);
+      //   });
+      let ele = document.body;
+      domtoimage.toPng(ele).then(function (dataUrl) {
+        let img = new Image();
+        img.src = dataUrl;
+        document.body.appendChild(img);
       });
       shadowRoot
         .getElementById("ss-checkbox")
