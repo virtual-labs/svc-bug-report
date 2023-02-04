@@ -46,7 +46,7 @@ export default class Screenshot {
     }
 
     async takeScreenshot(){
-        // wait for 2 seconds to make sure the video is ready
+        // wait for .5 seconds to make sure the video is ready
         await new Promise(resolve => setTimeout(resolve, 500));
         const canvas = document.createElement("canvas");
         canvas.width = screenshotVideo.clientWidth;
@@ -54,7 +54,6 @@ export default class Screenshot {
         canvas.getContext('2d').drawImage(screenshotVideo, 0, 0, canvas.width, canvas.height);
         const img = document.createElement("img");
         img.src = canvas.toDataURL();
-
         if (this.args.width) {
             img.width = this.args.width;
         }
@@ -65,6 +64,10 @@ export default class Screenshot {
         img.addEventListener('load', () => {
             if (typeof this.args.success == 'function'){
                 this.args.success(img);
+                // Stop the stream
+                let tracks =  screenshotVideo.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                screenshotVideo.srcObject = null;
             }
         });
     }

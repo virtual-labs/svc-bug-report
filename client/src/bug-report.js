@@ -264,10 +264,12 @@ customElements.define(
       shadowRoot
         .getElementById("bug-report-button")
         .addEventListener("click", async function (e) {
+          modal.style.display = "none";
+          modal.className = "modal fade";
           b64 = await addScreenshot(shadowRoot, b64);
-          modal.style.display = "block";
-          modal.style.paddingRight = "17px";
-          modal.className = "modal fade show";
+          // modal.style.display = "block";
+          // modal.style.paddingRight = "17px";
+          // modal.className = "modal fade show";
         });
       shadowRoot
         .getElementById("close-button")
@@ -354,12 +356,16 @@ customElements.define(
 
     async addScreenshot(shadowRoot, b64) {
       const image_container = shadowRoot.getElementById("image-container");
+      const modal = shadowRoot.querySelector('.modal')
+
       new Screenshot({success: img => {
         b64 = img.src;
         console.log(b64);
         image_container.innerHTML = `<img src="${b64}" alt="Screenshot" style="width: 100%; height: 100%; object-fit: contain;"/>`;
         // image_container.innerHTML = "";
         // image_container.appendChild(img);
+        modal.style.display = "block";
+        modal.className = "modal fade show";
         shadowRoot
         .getElementById("ss-checkbox")
         .addEventListener("click", function () {
@@ -368,6 +374,7 @@ customElements.define(
           shadowRoot.getElementById("image-canva").style["height"] = "auto";
         });
       }})
+
       console.log(b64);
       return b64;
     }
