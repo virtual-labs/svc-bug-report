@@ -1,6 +1,16 @@
 import loadHTML from "./template/loadHTML.js";
+import Screenshot from "./screenshot.js";
 import "./template/html2canvas.js";
 
+// Add jsdoc comment for function
+
+/**
+ * This function gets the current date and time
+ * @returns {string} The current date and time
+ * @example
+ * getDateTime()
+ * // => "2020-10-10 10:10:10"
+ */
 function getDateTime() {
   const monthNames = [
     "January",
@@ -36,6 +46,12 @@ function getDateTime() {
   return date;
 }
 
+/**
+ * This function posts data to the server, which adds bug to github issues
+ * @param {string} url 
+ * @param {string} data 
+ * @returns {Promise}
+ */
 async function postData(url = "", data = {}) {
   const res = await fetch(url, {
     method: "POST",
@@ -50,6 +66,15 @@ async function postData(url = "", data = {}) {
   // return response.json(); // parses JSON response into native JavaScript objects
 }
 
+/**
+ * This function creates the bug report and posts it to the server
+ * @param {string} title
+ * @param {string} context_info (VLABS Specific)
+ * @param {string} list of issues
+ * @param {b64} screenshot
+ * @param {string} description
+ * @returns {Promise}
+ */   
 const submit_bug_report = async (
   title,
   context_info,
@@ -83,9 +108,20 @@ const submit_bug_report = async (
   return response;
 };
 
+/**
+ * Creating a bug report element
+ */
 customElements.define(
   "bug-report",
+  /**
+   * This class creates a bug report element
+   * @extends HTMLElement
+   */
   class extends HTMLElement {
+    /**
+     * This initializes the bug report element
+     * @constructor
+     */
     constructor() {
       super(); // always call super() first in the constructor.
       this.b64 = "";
@@ -228,10 +264,12 @@ customElements.define(
       shadowRoot
         .getElementById("bug-report-button")
         .addEventListener("click", async function (e) {
+          modal.style.display = "none";
+          modal.className = "modal fade";
           b64 = await addScreenshot(shadowRoot, b64);
-          modal.style.display = "block";
-          modal.style.paddingRight = "17px";
-          modal.className = "modal fade show";
+          // modal.style.display = "block";
+          // modal.style.paddingRight = "17px";
+          // modal.className = "modal fade show";
         });
       shadowRoot
         .getElementById("close-button")
@@ -318,25 +356,26 @@ customElements.define(
 
     async addScreenshot(shadowRoot, b64) {
       const image_container = shadowRoot.getElementById("image-container");
-      const opts = {
-        logging: true,
-        useCORS: true,
-      };
-      b64 = await html2canvas(document.body, opts).then(function (canvas) {
-        canvas.id = "image-canva";
-        image_container.innerHTML = "";
-        image_container.appendChild(canvas);
-        let dataURL = canvas.toDataURL();
-        b64 = dataURL.split(",")[1];
-        return b64;
-      });
-      shadowRoot
+      const modal = shadowRoot.querySelector('.modal')
+
+      new Screenshot({success: img => {
+        b64 = img.src;
+        console.log(b64);
+        image_container.innerHTML = `<img src="${b64}" alt="Screenshot" style="width: 100%; height: 100%; object-fit: contain;"/>`;
+        // image_container.innerHTML = "";
+        // image_container.appendChild(img);
+        modal.style.display = "block";
+        modal.className = "modal fade show";
+        shadowRoot
         .getElementById("ss-checkbox")
         .addEventListener("click", function () {
           shadowRoot.getElementById("image-container").style.display =
             shadowRoot.getElementById("ss-checkbox").checked ? "block" : "none";
           shadowRoot.getElementById("image-canva").style["height"] = "auto";
         });
+      }})
+
+      console.log(b64);
       return b64;
     }
   }
