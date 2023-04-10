@@ -328,7 +328,9 @@ customElements.define(
                 });
                 // Dispatch the event.
                 shadowRoot.dispatchEvent(event);
-                // alert("Bug report submitted successfully");
+
+                modal.style.display = "none";
+                modal.className = "modal fade";
               } else {
                 const event = new CustomEvent("vl-bug-report", {
                   detail: {
