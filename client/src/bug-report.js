@@ -306,6 +306,11 @@ customElements.define(
               "Please include either screenshot or description. Both fields cannot be empty"
             );
           } else {
+            // get current image src
+            const image_container = shadowRoot.getElementById("image-container");
+            // get img inside image_container
+            const img = image_container.getElementsByTagName("img")[0];
+            b64 = img.src ? img.src.split(",")[1] : false;
             let res = await submit_bug_report(
               bug_info["title"],
               bug_info["context_info"],
@@ -381,8 +386,6 @@ customElements.define(
           shadowRoot.getElementById("image-canva").style["height"] = "auto";
         });
       }})
-
-      console.log(b64);
       return b64;
     }
   }
