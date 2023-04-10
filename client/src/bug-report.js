@@ -80,7 +80,8 @@ const submit_bug_report = async (
   context_info,
   issues,
   img = false,
-  description = false
+  description = false,
+  email = false
 ) => {
   const data = {
     title,
@@ -88,6 +89,7 @@ const submit_bug_report = async (
     issues,
     img,
     description,
+    email,
     datetime: getDateTime(),
   };
   console.log(
@@ -297,6 +299,8 @@ customElements.define(
           // Check if one of screenshot or description are available
           const imageBool = shadowRoot.getElementById("ss-checkbox").checked;
           const description = shadowRoot.getElementById("tf_description").value;
+          const email = shadowRoot.getElementById("tf_email").value;
+
           if (!imageBool && !description) {
             alert(
               "Please include either screenshot or description. Both fields cannot be empty"
@@ -307,7 +311,8 @@ customElements.define(
               bug_info["context_info"],
               bug_info["issues"],
               imageBool ? b64 : false,
-              description ? description : false
+              description ? description : false,
+              email ? email : false              
             );
             console.log("Response is: " + res);
             if (res.status) {
