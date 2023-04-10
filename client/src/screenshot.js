@@ -21,7 +21,8 @@ export default class Screenshot {
                     screenshotVideo.srcObject = null;
                 }
                 navigator.mediaDevices.getDisplayMedia({
-                    audio: false
+                    audio: false,
+                    preferCurrentTab: true,
                 })
                 .then((record) => {
                     screenshotVideo.srcObject = record;
