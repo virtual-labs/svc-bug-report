@@ -2,7 +2,18 @@ import loadHTML from "./template/loadHTML.js";
 import Screenshot from "./screenshot.js";
 import "./template/html2canvas.js";
 
-// Add jsdoc comment for function
+let isAndroid = false;
+let isIos = false;
+let isScreenShareSupported = true;
+const userAgent = navigator.userAgent;
+if (/iPad|iPhone|iPod/.test(userAgent)) {
+  isIos = true;
+} else if (/Android/.test(userAgent)) {
+  isAndroid = true;
+}
+if (typeof navigator.mediaDevices?.getDisplayMedia !== "function") {
+  isScreenShareSupported = false;
+}
 
 /**
  * This function gets the current date and time
@@ -48,8 +59,8 @@ function getDateTime() {
 
 /**
  * This function posts data to the server, which adds bug to github issues
- * @param {string} url 
- * @param {string} data 
+ * @param {string} url
+ * @param {string} data
  * @returns {Promise}
  */
 async function postData(url = "", data = {}) {
@@ -74,7 +85,7 @@ async function postData(url = "", data = {}) {
  * @param {b64} screenshot
  * @param {string} description
  * @returns {Promise}
- */   
+ */
 const submit_bug_report = async (
   title,
   context_info,
@@ -83,6 +94,11 @@ const submit_bug_report = async (
   description = false,
   email = false
 ) => {
+
+  description = description
+    ? description + "\n\nUserAgent: " + userAgent
+    : "UserAgent: " + userAgent;
+
   const data = {
     title,
     context_info,
@@ -245,6 +261,7 @@ customElements.define(
       crossorigin="anonymous"
     />
     `;
+
       shadowRoot.appendChild(tmpl.content.cloneNode(true));
       let modal = shadowRoot.querySelector(".modal");
       // Set Position
@@ -266,12 +283,15 @@ customElements.define(
       shadowRoot
         .getElementById("bug-report-button")
         .addEventListener("click", async function (e) {
-          modal.style.display = "none";
-          modal.className = "modal fade";
-          b64 = await addScreenshot(shadowRoot, b64);
-          // modal.style.display = "block";
-          // modal.style.paddingRight = "17px";
-          // modal.className = "modal fade show";
+          if (isScreenShareSupported) {
+            modal.style.display = "none";
+            modal.className = "modal fade";
+            b64 = await addScreenshot(shadowRoot, b64);
+          } else {
+            modal.style.display = "block";
+            modal.style.paddingRight = "17px";
+            modal.className = "modal fade show";
+          }
         });
       shadowRoot
         .getElementById("close-button")
@@ -307,17 +327,18 @@ customElements.define(
             );
           } else {
             // get current image src
-            const image_container = shadowRoot.getElementById("image-container");
+            const image_container =
+              shadowRoot.getElementById("image-container");
             // get img inside image_container
             const img = image_container.getElementsByTagName("img")[0];
-            b64 = img.src ? img.src.split(",")[1] : false;
+            b64 = img?.src ? img.src.split(",")[1] : false;
             let res = await submit_bug_report(
               bug_info["title"],
               bug_info["context_info"],
               bug_info["issues"],
               imageBool ? b64 : false,
               description ? description : false,
-              email ? email : false              
+              email ? email : false
             );
             console.log("Response is: " + res);
             if (res.status) {
@@ -363,29 +384,39 @@ customElements.define(
             }
           }
         });
+
+      // Disable ss-checkbox if screen sharing is not supported
+      if (!isScreenShareSupported) {
+        shadowRoot.getElementById("ss-div").style.display = "none";
+      }
+
       this.addCheckboxes();
     }
 
     async addScreenshot(shadowRoot, b64) {
       const image_container = shadowRoot.getElementById("image-container");
-      const modal = shadowRoot.querySelector('.modal')
+      const modal = shadowRoot.querySelector(".modal");
 
-      new Screenshot({success: img => {
-        b64 = img.src;
-        console.log(b64);
-        image_container.innerHTML = `<img src="${b64}" alt="Screenshot" style="width: 100%; height: 100%; object-fit: contain;"/>`;
-        // image_container.innerHTML = "";
-        // image_container.appendChild(img);
-        modal.style.display = "block";
-        modal.className = "modal fade show";
-        shadowRoot
-        .getElementById("ss-checkbox")
-        .addEventListener("click", function () {
-          shadowRoot.getElementById("image-container").style.display =
-            shadowRoot.getElementById("ss-checkbox").checked ? "block" : "none";
-          shadowRoot.getElementById("image-canva").style["height"] = "auto";
-        });
-      }})
+      new Screenshot({
+        success: (img) => {
+          b64 = img.src;
+          console.log(b64);
+          image_container.innerHTML = `<img src="${b64}" alt="Screenshot" style="width: 100%; height: 100%; object-fit: contain;"/>`;
+          // image_container.innerHTML = "";
+          // image_container.appendChild(img);
+          modal.style.display = "block";
+          modal.className = "modal fade show";
+          shadowRoot
+            .getElementById("ss-checkbox")
+            .addEventListener("click", function () {
+              shadowRoot.getElementById("image-container").style.display =
+                shadowRoot.getElementById("ss-checkbox").checked
+                  ? "block"
+                  : "none";
+              shadowRoot.getElementById("image-canva").style["height"] = "auto";
+            });
+        },
+      });
       return b64;
     }
   }
