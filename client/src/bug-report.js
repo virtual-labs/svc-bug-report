@@ -108,21 +108,21 @@ const submit_bug_report = async (
     email,
     datetime: getDateTime(),
   };
-  console.log(
-    "Submitting bug report: \ncontext: " +
-      context_info +
-      "\nissues: " +
-      issues +
-      "\nimg: " +
-      (img ? true : img) +
-      "\ndescription: " +
-      description
-  );
+  // console.log(
+  //   "Submitting bug report: \ncontext: " +
+  //     context_info +
+  //     "\nissues: " +
+  //     issues +
+  //     "\nimg: " +
+  //     (img ? true : img) +
+  //     "\ndescription: " +
+  //     description
+  // );
   let response = await postData(
     "https://sj99le0gyb.execute-api.ap-south-1.amazonaws.com/dev/",
     data
   );
-  console.log(response);
+  // console.log(response);
   return response;
 };
 
@@ -146,8 +146,8 @@ customElements.define(
       this.bug_info = {};
       let attr = this.attributes,
         array = Array.prototype.slice.call(attr);
-      console.log(array);
-      console.log(this.attributes);
+      // console.log(array);
+      // console.log(this.attributes);
       // Set Position
       if (!this.hasAttribute("position")) {
         this.setAttribute("position", "top right");
@@ -194,11 +194,11 @@ customElements.define(
     attributeChangedCallback(name, oldValue, newValue) {
       switch (name) {
         case "checkbox-json":
-          console.log(`Value changed from ${oldValue} to ${newValue}`);
+          // console.log(`Value changed from ${oldValue} to ${newValue}`);
           this.addCheckboxes();
           break;
         case "context-info":
-          console.log(`Value changed from ${oldValue} to ${newValue}`);
+          // console.log(`Value changed from ${oldValue} to ${newValue}`);
           this.bug_info["context_info"] = newValue;
           break;
       }
@@ -209,13 +209,16 @@ customElements.define(
       const questions = JSON.parse(this.checkbox_json);
       const chb_div = this.shadowRoot.getElementById("checkboxes-question");
       if (questions) {
-        console.log(this.shadowRoot.getElementById("custom-issues"));
+        // console.log(this.shadowRoot.getElementById("custom-issues"));
+        if(!this.shadowRoot.getElementById("custom-issues")){
+          return;
+        }
         this.shadowRoot.getElementById("custom-issues").style.display = "block";
         const p_type =
           this.getAttribute("page-type") in questions
             ? [this.getAttribute("page-type"), "DEFAULT"]
             : ["DEFAULT"];
-        console.log(p_type);
+        // console.log(p_type);
         chb_div
           ? p_type.forEach((page_type) => {
               questions[page_type].forEach((element) => {
@@ -238,7 +241,7 @@ customElements.define(
                     this.bug_info.issues = this.bug_info.issues.filter((el) => {
                       return el !== element;
                     });
-                  console.log(this.bug_info.issues);
+                  // console.log(this.bug_info.issues);
                 });
               });
             })
@@ -340,7 +343,7 @@ customElements.define(
               description ? description : false,
               email ? email : false
             );
-            console.log("Response is: " + res);
+            // console.log("Response is: " + res);
             if (res.status) {
               if (res.status === 200 || res.status === 201) {
                 const event = new CustomEvent("vl-bug-report", {
@@ -400,7 +403,7 @@ customElements.define(
       new Screenshot({
         success: (img) => {
           b64 = img.src;
-          console.log(b64);
+          // console.log(b64);
           image_container.innerHTML = `<img src="${b64}" alt="Screenshot" style="width: 100%; height: 100%; object-fit: contain;"/>`;
           // image_container.innerHTML = "";
           // image_container.appendChild(img);
