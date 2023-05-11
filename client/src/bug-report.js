@@ -324,7 +324,11 @@ customElements.define(
           const description = shadowRoot.getElementById("tf_description").value;
           const email = shadowRoot.getElementById("tf_email").value;
 
-          if (!imageBool && !description) {
+          if (!description && !isScreenShareSupported){
+            alert(
+              "Please include a description."
+            )
+          } else if (!imageBool && !description) {
             alert(
               "Please include either screenshot or description. Both fields cannot be empty"
             );
