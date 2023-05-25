@@ -287,14 +287,18 @@ customElements.define(
         .getElementById("bug-report-button")
         .addEventListener("click", async function (e) {
           if (isScreenShareSupported) {
-            modal.style.display = "none";
-            modal.className = "modal fade";
-            b64 = await addScreenshot(shadowRoot, b64);
+            // modal.style.display = "none";
+            // modal.className = "modal fade";
+            // b64 = await addScreenshot(shadowRoot, b64);
           } else {
-            modal.style.display = "block";
-            modal.style.paddingRight = "17px";
-            modal.className = "modal fade show";
+            // modal.style.display = "block";
+            // modal.style.paddingRight = "17px";
+            // modal.className = "modal fade show";
           }
+          modal.style.display = "block";
+          modal.style.paddingRight = "17px";
+          modal.className = "modal fade show";
+
         });
       shadowRoot
         .getElementById("close-button")
@@ -314,6 +318,14 @@ customElements.define(
           if (e.target !== modal) return;
           modal.style.display = "none";
           modal.className = "modal fade";
+        });
+
+        shadowRoot.getElementById("ss-checkbox").addEventListener("click", async function (e) {
+          if (e.target.checked){
+            modal.style.display = "none";
+            modal.className = "modal fade";
+            b64 = await addScreenshot(shadowRoot, b64);
+          } 
         });
 
       shadowRoot
@@ -424,6 +436,7 @@ customElements.define(
             });
         },
       });
+
       return b64;
     }
   }
