@@ -94,10 +94,15 @@ const submit_bug_report = async (
   description = false,
   email = false
 ) => {
-
   description = description
     ? description + "\n\nUserAgent: " + userAgent
     : "UserAgent: " + userAgent;
+
+  const expUrl = window.location.href;
+  let pathArray = expUrl.split("/");
+  let protocol = pathArray[0];
+  let host = pathArray[2];
+  const labUrl = protocol + "//" + host;
 
   const data = {
     title,
@@ -107,7 +112,10 @@ const submit_bug_report = async (
     description,
     email,
     datetime: getDateTime(),
+    expUrl,
+    labUrl,
   };
+
   // console.log(
   //   "Submitting bug report: \ncontext: " +
   //     context_info +
@@ -122,6 +130,7 @@ const submit_bug_report = async (
     "https://sj99le0gyb.execute-api.ap-south-1.amazonaws.com/dev/",
     data
   );
+  // console.log(data);
   // console.log(response);
   return response;
 };
@@ -210,7 +219,7 @@ customElements.define(
       const chb_div = this.shadowRoot.getElementById("checkboxes-question");
       if (questions) {
         // console.log(this.shadowRoot.getElementById("custom-issues"));
-        if(!this.shadowRoot.getElementById("custom-issues")){
+        if (!this.shadowRoot.getElementById("custom-issues")) {
           return;
         }
         this.shadowRoot.getElementById("custom-issues").style.display = "block";
@@ -298,7 +307,6 @@ customElements.define(
           modal.style.display = "block";
           modal.style.paddingRight = "17px";
           modal.className = "modal fade show";
-
         });
       shadowRoot
         .getElementById("close-button")
@@ -320,12 +328,14 @@ customElements.define(
           modal.className = "modal fade";
         });
 
-        shadowRoot.getElementById("ss-checkbox").addEventListener("click", async function (e) {
-          if (e.target.checked){
+      shadowRoot
+        .getElementById("ss-checkbox")
+        .addEventListener("click", async function (e) {
+          if (e.target.checked) {
             modal.style.display = "none";
             modal.className = "modal fade";
             b64 = await addScreenshot(shadowRoot, b64);
-          } 
+          }
         });
 
       shadowRoot
@@ -336,10 +346,8 @@ customElements.define(
           const description = shadowRoot.getElementById("tf_description").value;
           const email = shadowRoot.getElementById("tf_email").value;
 
-          if (!description && !isScreenShareSupported){
-            alert(
-              "Please include a description."
-            )
+          if (!description && !isScreenShareSupported) {
+            alert("Please include a description.");
           } else if (!imageBool && !description) {
             alert(
               "Please include either screenshot or description. Both fields cannot be empty"
