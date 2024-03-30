@@ -112,8 +112,7 @@ const submit_bug_report = async (
     description,
     email,
     datetime: getDateTime(),
-    expUrl,
-    labUrl,
+    experiment_link: expUrl,
   };
 
   // console.log(
