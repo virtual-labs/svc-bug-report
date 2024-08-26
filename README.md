@@ -4,7 +4,7 @@ The web component takes certain inputs and returns an event on success which can
 
 ## Features
 The following are features which are easily extendible:
-* User can select from a preset options pased on page type.
+* User can select from a preset options based on page type.
 * User can share a screenshot.
 * User can write a detailed report.
 
@@ -40,14 +40,15 @@ For example:
 
 ## Editable attributes
 **1. title**  
-This will be the title that will be in the event on submitting the buug report.  
+This will be the title in the event on submitting the bug report.  
 **2. page-type**   
-This is a list of hardcoded questions based on the following [types](https://github.com/virtual-labs/svc-bug-report/blob/wc/questions.json).  
+This is a list of hardcoded questions based on the following [types](hhttps://github.com/virtual-labs/svc-bug-report/blob/main/questions.json).  
+
 Depending on the type given, the Multiple Choice options will be rendered.  
 **3. context-info**   
-This is data which will be passed as it is, this is left for developer to deal with. One possible use case would be to pass custom data for google analytics.  
+This data will be passed as it is, this is left for developer to deal with. One possible use case would be to pass custom data for google analytics.  
 **4. checkbox-json**
-This would consist of additonal questions which you want to ask, the format for the same is as follows [here](https://github.com/virtual-labs/ph3-lab-mgmt/blob/plugin/bug-report-wc/assets_plugins/json/bug-report-questions.js)
+This would consist of additional questions which you want to ask, the format for the same is as follows [here](https://github.com/virtual-labs/ph3-lab-mgmt/blob/master/assets_plugins/json/bug-report-questions.js)
 **5. button_style**  
 You need to add styling to this attribute if you would like to add css to bug report button.  
 **6. position**  
@@ -68,8 +69,8 @@ Similar to button_style, but in the case where you want button to follow styling
 
 ## To Move to Production
 1. For moving the bug report from testing to deployment please remove the if condition from the following two files
-   1. https://github.com/virtual-labs/ph3-lab-mgmt/blob/master/templates/partials/bug-report-mobile.handlebars 
-   2. https://github.com/virtual-labs/ph3-lab-mgmt/blob/master/templates/partials/header.handlebars#L16
+   1. https://github.com/virtual-labs/ph3-lab-mgmt/blob/master/exp_build/templates/partials/bug-report-mobile.handlebars 
+   2. https://github.com/virtual-labs/ph3-lab-mgmt/blob/master/exp_build/templates/partials/header.handlebars#L16
 2. This will build bug report in all stages of deployment.
 
 ## TODO
