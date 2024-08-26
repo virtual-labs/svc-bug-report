@@ -291,6 +291,9 @@ customElements.define(
         shadowRoot.getElementById("bug-report-button").classList =
           this.custom_button_class;
       }
+
+      this.addCheckboxes();
+
       shadowRoot
         .getElementById("bug-report-button")
         .addEventListener("click", async function (e) {
@@ -352,71 +355,89 @@ customElements.define(
               "Please include either screenshot or description. Both fields cannot be empty"
             );
           } else {
-            // get current image src
-            const image_container =
-              shadowRoot.getElementById("image-container");
-            // get img inside image_container
-            const img = image_container.getElementsByTagName("img")[0];
-            b64 = img?.src ? img.src.split(",")[1] : false;
-            let res = await submit_bug_report(
-              bug_info["title"],
-              bug_info["context_info"],
-              bug_info["issues"],
-              imageBool ? b64 : false,
-              description ? description : false,
-              email ? email : false
-            );
-            // console.log("Response is: " + res);
-            if (res.status) {
-              if (res.status === 200 || res.status === 201) {
-                const event = new CustomEvent("vl-bug-report", {
-                  detail: {
-                    title: bug_info["title"],
-                    issues: bug_info["issues"],
-                    status: res.status,
-                    message: "Bug Reported Successfully",
-                  },
-                  composed: true, // Like this
-                });
-                // Dispatch the event.
-                shadowRoot.dispatchEvent(event);
+              try {
+                // get current image src
+                const image_container =
+                  shadowRoot.getElementById("image-container");
+                // get img inside image_container
+                const img = image_container.getElementsByTagName("img")[0];
+                b64 = img?.src ? img.src.split(",")[1] : false;
+                let res = await submit_bug_report(
+                  bug_info["title"],
+                  bug_info["context_info"],
+                  bug_info["issues"],
+                  imageBool ? b64 : false,
+                  description ? description : false,
+                  email ? email : false
+                );
+                // console.log("Response is: " + res);
+                if (res.status) {
+                  if (res.status === 200 || res.status === 201) {
+                    const event = new CustomEvent("vl-bug-report", {
+                      detail: {
+                        title: bug_info["title"],
+                        issues: bug_info["issues"],
+                        status: res.status,
+                        message: "Bug Reported Successfully",
+                      },
+                      composed: true, // Like this
+                    });
+                    // Dispatch the event.
+                    shadowRoot.dispatchEvent(event);
 
-                modal.style.display = "none";
-                modal.className = "modal fade";
-              } else {
-                const event = new CustomEvent("vl-bug-report", {
-                  detail: {
-                    title: bug_info["title"],
-                    status: res.status,
-                    message: "Bug report failed",
-                  },
-                  composed: true, // Like this
-                });
-                // Dispatch the event.
-                shadowRoot.dispatchEvent(event);
-              }
-            } else {
-              const event = new CustomEvent("vl-bug-report", {
-                detail: {
-                  title: bug_info["title"],
-                  status: res.status,
-                  message: "Internal Server Error",
-                },
-                composed: true, // Like this
-              });
-              // Dispatch the event.
-              shadowRoot.dispatchEvent(event);
-              // alert("Bug report failed to submit, PLease try again");
+                    modal.style.display = "none";
+                    modal.className = "modal fade";
+                  } else {
+                    const event = new CustomEvent("vl-bug-report", {
+                      detail: {
+                        title: bug_info["title"],
+                        status: res.status,
+                        message: "Bug report failed",
+                      },
+                      composed: true, // Like this
+                    });
+                    // Dispatch the event.
+                    shadowRoot.dispatchEvent(event);
+                  }
+                } else {
+                  const event = new CustomEvent("vl-bug-report", {
+                    detail: {
+                      title: bug_info["title"],
+                      status: res.status,
+                      message: "Internal Server Error",
+                    },
+                    composed: true, // Like this
+                  });
+                  // Dispatch the event.
+                  shadowRoot.dispatchEvent(event);
+                  // alert("Bug report failed to submit, PLease try again");
+                }
+          } catch (error) {
+            // Handle submission error
+            console.error('Error submitting form:', error);
+          } finally {
+            // Reset the form irrespective of the outcome
+            shadowRoot.getElementById("tf_description").value = '';
+            shadowRoot.getElementById("tf_email").value = '';
+            shadowRoot.getElementById("ss-checkbox").checked = false;          
+
+            const image_container = shadowRoot.getElementById("image-container");
+            const img = image_container.getElementsByTagName("img")[0];
+            while (image_container.firstChild) {
+              image_container.removeChild(image_container.firstChild);
             }
+            const checkboxes = shadowRoot.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+              checkbox.checked = false;
+            });          
           }
-        });
+        }
+      });
 
       // Disable ss-checkbox if screen sharing is not supported
       if (!isScreenShareSupported) {
         shadowRoot.getElementById("ss-div").style.display = "none";
       }
-
-      this.addCheckboxes();
     }
 
     async addScreenshot(shadowRoot, b64) {
