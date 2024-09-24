@@ -134,6 +134,23 @@ const submit_bug_report = async (
   return response;
 };
 
+// Function to reset the form fields
+function resetForm(shadowRoot) {
+  shadowRoot.getElementById("tf_description").value = '';
+  shadowRoot.getElementById("tf_email").value = '';
+  shadowRoot.getElementById("ss-checkbox").checked = false;
+
+  const image_container = shadowRoot.getElementById("image-container");
+  while (image_container.firstChild) {
+    image_container.removeChild(image_container.firstChild);
+  }
+
+  const checkboxes = shadowRoot.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = false;
+  });
+}
+
 /**
  * Creating a bug report element
  */
@@ -310,6 +327,16 @@ customElements.define(
           modal.style.paddingRight = "17px";
           modal.className = "modal fade show";
         });
+
+      shadowRoot
+        .getElementById("bug-report-button")
+        .addEventListener("click", async function (e) {
+          resetForm(shadowRoot); // Reset the form fields
+          modal.style.display = "block";
+          modal.style.paddingRight = "17px";
+          modal.className = "modal fade show";
+        });
+
       shadowRoot
         .getElementById("close-button")
         .addEventListener("click", function () {
@@ -417,19 +444,7 @@ customElements.define(
             console.error('Error submitting form:', error);
           } finally {
             // Reset the form irrespective of the outcome
-            shadowRoot.getElementById("tf_description").value = '';
-            shadowRoot.getElementById("tf_email").value = '';
-            shadowRoot.getElementById("ss-checkbox").checked = false;          
-
-            const image_container = shadowRoot.getElementById("image-container");
-            const img = image_container.getElementsByTagName("img")[0];
-            while (image_container.firstChild) {
-              image_container.removeChild(image_container.firstChild);
-            }
-            const checkboxes = shadowRoot.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-              checkbox.checked = false;
-            });          
+            resetForm(shadowRoot);
           }
         }
       });
