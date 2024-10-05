@@ -64,17 +64,24 @@ function getDateTime() {
  * @returns {Promise}
  */
 async function postData(url = "", data = {}) {
-  const res = await fetch(url, {
-    method: "POST",
-    cache: "no-cache",
-    headers: {
-      "X-Api-Key": "dKLwHjAj1759ytPPXu3H65ZFp9aoZFor4Xv4Fc4v",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data), // body data type must match "Content-Type" header
-  });
-  return res;
-  // return response.json(); // parses JSON response into native JavaScript objects
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      cache: "no-cache",
+      headers: {
+        "X-Api-Key": "dKLwHjAj1759ytPPXu3H65ZFp9aoZFor4Xv4Fc4v",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data), // body data type must match "Content-Type" header
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res;
+    // return response.json(); // parses JSON response into native JavaScript objects
+  }catch (error) {    
+    throw new Error(`Error: ${error.message}`);  
+  }
 }
 
 /**
@@ -441,9 +448,24 @@ customElements.define(
                 }
           } catch (error) {
             // Handle submission error
-            console.error('Error submitting form:', error);
+            console.error('Error while submitting the bug :', error);            
+            // Dispatch the vl-bug-report event with the error details
+            const errorEvent = new CustomEvent('vl-bug-report', {
+              detail: { 
+                title: bug_info["title"],
+                status: error.status || 'unknown',
+                message: 'Bug report failed',
+                error: error 
+              },
+              bubbles: true,
+              cancelable: true,
+              composed: true
+            });
+            //console.log('errorEvent);             
+            shadowRoot.dispatchEvent(errorEvent);
           } finally {
             // Reset the form irrespective of the outcome
+            //console.log('Resetting the form');
             resetForm(shadowRoot);
           }
         }
