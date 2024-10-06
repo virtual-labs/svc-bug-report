@@ -64,17 +64,24 @@ function getDateTime() {
  * @returns {Promise}
  */
 async function postData(url = "", data = {}) {
-  const res = await fetch(url, {
-    method: "POST",
-    cache: "no-cache",
-    headers: {
-      "X-Api-Key": "dKLwHjAj1759ytPPXu3H65ZFp9aoZFor4Xv4Fc4v",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data), // body data type must match "Content-Type" header
-  });
-  return res;
-  // return response.json(); // parses JSON response into native JavaScript objects
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      cache: "no-cache",
+      headers: {
+        "X-Api-Key": "dKLwHjAj1759ytPPXu3H65ZFp9aoZFor4Xv4Fc4v",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data), // body data type must match "Content-Type" header
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res;
+    // return response.json(); // parses JSON response into native JavaScript objects
+  }catch (error) {    
+    throw new Error(`Error: ${error.message}`);  
+  }
 }
 
 /**
@@ -133,6 +140,23 @@ const submit_bug_report = async (
   // console.log(response);
   return response;
 };
+
+// Function to reset the form fields
+function resetForm(shadowRoot) {
+  shadowRoot.getElementById("tf_description").value = '';
+  shadowRoot.getElementById("tf_email").value = '';
+  shadowRoot.getElementById("ss-checkbox").checked = false;
+
+  const image_container = shadowRoot.getElementById("image-container");
+  while (image_container.firstChild) {
+    image_container.removeChild(image_container.firstChild);
+  }
+
+  const checkboxes = shadowRoot.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = false;
+  });
+}
 
 /**
  * Creating a bug report element
@@ -203,7 +227,7 @@ customElements.define(
       switch (name) {
         case "checkbox-json":
           // console.log(`Value changed from ${oldValue} to ${newValue}`);
-          this.addCheckboxes();
+          this.addCheckboxes(); //add checkboxes to the form when the checkbox-json attribute changes
           break;
         case "context-info":
           // console.log(`Value changed from ${oldValue} to ${newValue}`);
@@ -291,6 +315,9 @@ customElements.define(
         shadowRoot.getElementById("bug-report-button").classList =
           this.custom_button_class;
       }
+
+      this.addCheckboxes(); // Add checkboxes to the form at the start
+
       shadowRoot
         .getElementById("bug-report-button")
         .addEventListener("click", async function (e) {
@@ -307,6 +334,16 @@ customElements.define(
           modal.style.paddingRight = "17px";
           modal.className = "modal fade show";
         });
+
+      shadowRoot
+        .getElementById("bug-report-button")
+        .addEventListener("click", async function (e) {
+          resetForm(shadowRoot); // Reset the form fields
+          modal.style.display = "block";
+          modal.style.paddingRight = "17px";
+          modal.className = "modal fade show";
+        });
+
       shadowRoot
         .getElementById("close-button")
         .addEventListener("click", function () {
@@ -352,71 +389,92 @@ customElements.define(
               "Please include either screenshot or description. Both fields cannot be empty"
             );
           } else {
-            // get current image src
-            const image_container =
-              shadowRoot.getElementById("image-container");
-            // get img inside image_container
-            const img = image_container.getElementsByTagName("img")[0];
-            b64 = img?.src ? img.src.split(",")[1] : false;
-            let res = await submit_bug_report(
-              bug_info["title"],
-              bug_info["context_info"],
-              bug_info["issues"],
-              imageBool ? b64 : false,
-              description ? description : false,
-              email ? email : false
-            );
-            // console.log("Response is: " + res);
-            if (res.status) {
-              if (res.status === 200 || res.status === 201) {
-                const event = new CustomEvent("vl-bug-report", {
-                  detail: {
-                    title: bug_info["title"],
-                    issues: bug_info["issues"],
-                    status: res.status,
-                    message: "Bug Reported Successfully",
-                  },
-                  composed: true, // Like this
-                });
-                // Dispatch the event.
-                shadowRoot.dispatchEvent(event);
+              try {
+                // get current image src
+                const image_container =
+                  shadowRoot.getElementById("image-container");
+                // get img inside image_container
+                const img = image_container.getElementsByTagName("img")[0];
+                b64 = img?.src ? img.src.split(",")[1] : false;
+                let res = await submit_bug_report(
+                  bug_info["title"],
+                  bug_info["context_info"],
+                  bug_info["issues"],
+                  imageBool ? b64 : false,
+                  description ? description : false,
+                  email ? email : false
+                );
+                // console.log("Response is: " + res);
+                if (res.status) {
+                  if (res.status === 200 || res.status === 201) {
+                    const event = new CustomEvent("vl-bug-report", {
+                      detail: {
+                        title: bug_info["title"],
+                        issues: bug_info["issues"],
+                        status: res.status,
+                        message: "Bug Reported Successfully",
+                      },
+                      composed: true, // Like this
+                    });
+                    // Dispatch the event.
+                    shadowRoot.dispatchEvent(event);
 
-                modal.style.display = "none";
-                modal.className = "modal fade";
-              } else {
-                const event = new CustomEvent("vl-bug-report", {
-                  detail: {
-                    title: bug_info["title"],
-                    status: res.status,
-                    message: "Bug report failed",
-                  },
-                  composed: true, // Like this
-                });
-                // Dispatch the event.
-                shadowRoot.dispatchEvent(event);
-              }
-            } else {
-              const event = new CustomEvent("vl-bug-report", {
-                detail: {
-                  title: bug_info["title"],
-                  status: res.status,
-                  message: "Internal Server Error",
-                },
-                composed: true, // Like this
-              });
-              // Dispatch the event.
-              shadowRoot.dispatchEvent(event);
-              // alert("Bug report failed to submit, PLease try again");
-            }
+                    modal.style.display = "none";
+                    modal.className = "modal fade";
+                  } else {
+                    const event = new CustomEvent("vl-bug-report", {
+                      detail: {
+                        title: bug_info["title"],
+                        status: res.status,
+                        message: "Bug report failed",
+                      },
+                      composed: true, // Like this
+                    });
+                    // Dispatch the event.
+                    shadowRoot.dispatchEvent(event);
+                  }
+                } else {
+                  const event = new CustomEvent("vl-bug-report", {
+                    detail: {
+                      title: bug_info["title"],
+                      status: res.status,
+                      message: "Internal Server Error",
+                    },
+                    composed: true, // Like this
+                  });
+                  // Dispatch the event.
+                  shadowRoot.dispatchEvent(event);
+                  // alert("Bug report failed to submit, PLease try again");
+                }
+          } catch (error) {
+            // Handle submission error
+            console.error('Error while submitting the bug :', error);            
+            // Dispatch the vl-bug-report event with the error details
+            const errorEvent = new CustomEvent('vl-bug-report', {
+              detail: { 
+                title: bug_info["title"],
+                status: error.status || 'unknown',
+                message: 'Bug report failed',
+                error: error
+              },
+              bubbles: true,
+              cancelable: true,
+              composed: true
+            });
+            //console.log('errorEvent);             
+            shadowRoot.dispatchEvent(errorEvent);
+          } finally {
+            // Reset the form irrespective of the outcome
+            //console.log('Resetting the form');
+            resetForm(shadowRoot);
           }
-        });
+        }
+      });
 
       // Disable ss-checkbox if screen sharing is not supported
       if (!isScreenShareSupported) {
         shadowRoot.getElementById("ss-div").style.display = "none";
       }
-
-      this.addCheckboxes();
     }
 
     async addScreenshot(shadowRoot, b64) {
