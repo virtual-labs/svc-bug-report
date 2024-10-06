@@ -227,7 +227,7 @@ customElements.define(
       switch (name) {
         case "checkbox-json":
           // console.log(`Value changed from ${oldValue} to ${newValue}`);
-          this.addCheckboxes();
+          this.addCheckboxes(); //add checkboxes to the form when the checkbox-json attribute changes
           break;
         case "context-info":
           // console.log(`Value changed from ${oldValue} to ${newValue}`);
@@ -316,7 +316,7 @@ customElements.define(
           this.custom_button_class;
       }
 
-      this.addCheckboxes();
+      this.addCheckboxes(); // Add checkboxes to the form at the start
 
       shadowRoot
         .getElementById("bug-report-button")
@@ -455,7 +455,7 @@ customElements.define(
                 title: bug_info["title"],
                 status: error.status || 'unknown',
                 message: 'Bug report failed',
-                error: error 
+                error: error
               },
               bubbles: true,
               cancelable: true,
