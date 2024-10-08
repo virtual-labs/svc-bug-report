@@ -346,19 +346,21 @@ customElements.define(
 
       shadowRoot
         .getElementById("close-button")
-        .addEventListener("click", function () {
+        .addEventListener("click", () => {
+          console.log("Close button clicked");
+          this.bug_info.issues = [];
           modal.style.display = "none";
           modal.className = "modal fade";
         });
       shadowRoot
         .getElementById("close_x_button")
-        .addEventListener("click", function () {
+        .addEventListener("click", () => {
           modal.style.display = "none";
           modal.className = "modal fade";
         });
       shadowRoot
         .querySelector(".modal")
-        .addEventListener("click", function (e) {
+        .addEventListener("click", (e) => {
           if (e.target !== modal) return;
           modal.style.display = "none";
           modal.className = "modal fade";
