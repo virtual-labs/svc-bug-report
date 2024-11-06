@@ -507,6 +507,12 @@ customElements.define(
           
           const ssCheckbox = shadowRoot.getElementById("ss-checkbox");
           const imageCanva = shadowRoot.getElementById("image-canva");
+
+           // Debugging logs
+          //console.log('ssCheckbox:', ssCheckbox);
+          //console.log('imageCanva:', imageCanva);
+          //console.log('Shadow DOM content:', shadowRoot.innerHTML);
+
           // Ensuring the elements exist before attempting to access their style properties.
           if (ssCheckbox && imageCanva) {
             ssCheckbox.addEventListener("click", function () {
