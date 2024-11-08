@@ -380,8 +380,6 @@ customElements.define(
         .getElementById("submit")
         .addEventListener("click", async function () {
           const submitButton = shadowRoot.getElementById("submit");
-          // Disable the submit button to prevent multiple clicks
-          submitButton.disabled = true;
 
           // Check if one of screenshot or description are available
           const imageBool = shadowRoot.getElementById("ss-checkbox").checked;
@@ -394,8 +392,9 @@ customElements.define(
             alert(
               "Please include either screenshot or description. Both fields cannot be empty"
             );
-            submitButton.disabled = false; // Re-enable the submit button
           } else {
+              // Disable the submit button to prevent multiple clicks
+              submitButton.disabled = true;
               try {
                 // get current image src
                 const image_container =
@@ -474,7 +473,7 @@ customElements.define(
             // Reset the form irrespective of the outcome
             //console.log('Resetting the form');
             resetForm(shadowRoot);
-            // Re-enable the submit button
+            // Re-enable the submit button, in case of bug report failure
             submitButton.disabled = false;
           }
         }
@@ -505,23 +504,14 @@ customElements.define(
           modal.style.display = "block";
           modal.className = "modal fade show";
           
-          const ssCheckbox = shadowRoot.getElementById("ss-checkbox");
-          const imageCanva = shadowRoot.getElementById("image-canva");
-
-           // Debugging logs
-          //console.log('ssCheckbox:', ssCheckbox);
-          //console.log('imageCanva:', imageCanva);
-          //console.log('Shadow DOM content:', shadowRoot.innerHTML);
-
-          // Ensuring the elements exist before attempting to access their style properties.
-          if (ssCheckbox && imageCanva) {
-            ssCheckbox.addEventListener("click", function () {
-              image_container.style.display = ssCheckbox.checked ? "block" : "none";
-              imageCanva.style.height = "auto";
+          shadowRoot
+          .getElementById("ss-checkbox")
+          .addEventListener("click", function () {
+            shadowRoot.getElementById("image-container").style.display =
+              shadowRoot.getElementById("ss-checkbox").checked
+                ? "block"
+                : "none";
             });
-          } else {
-            console.error('Checkbox or image canvas not found');
-          }          
         },
       });
 
