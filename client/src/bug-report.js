@@ -379,6 +379,8 @@ customElements.define(
       shadowRoot
         .getElementById("submit")
         .addEventListener("click", async function () {
+          const submitButton = shadowRoot.getElementById("submit");
+
           // Check if one of screenshot or description are available
           const imageBool = shadowRoot.getElementById("ss-checkbox").checked;
           const description = shadowRoot.getElementById("tf_description").value;
@@ -391,6 +393,8 @@ customElements.define(
               "Please include either screenshot or description. Both fields cannot be empty"
             );
           } else {
+              // Disable the submit button to prevent multiple clicks
+              submitButton.disabled = true;
               try {
                 // get current image src
                 const image_container =
@@ -469,6 +473,8 @@ customElements.define(
             // Reset the form irrespective of the outcome
             //console.log('Resetting the form');
             resetForm(shadowRoot);
+            // Re-enable the submit button, in case of bug report failure
+            submitButton.disabled = false;
           }
         }
       });
@@ -483,6 +489,11 @@ customElements.define(
       const image_container = shadowRoot.getElementById("image-container");
       const modal = shadowRoot.querySelector(".modal");
 
+      if (!image_container || !modal) {
+        console.error('Required elements not found');
+        return b64;
+      }
+
       new Screenshot({
         success: (img) => {
           b64 = img.src;
@@ -492,14 +503,14 @@ customElements.define(
           // image_container.appendChild(img);
           modal.style.display = "block";
           modal.className = "modal fade show";
+          
           shadowRoot
-            .getElementById("ss-checkbox")
-            .addEventListener("click", function () {
-              shadowRoot.getElementById("image-container").style.display =
-                shadowRoot.getElementById("ss-checkbox").checked
-                  ? "block"
-                  : "none";
-              shadowRoot.getElementById("image-canva").style["height"] = "auto";
+          .getElementById("ss-checkbox")
+          .addEventListener("click", function () {
+            shadowRoot.getElementById("image-container").style.display =
+              shadowRoot.getElementById("ss-checkbox").checked
+                ? "block"
+                : "none";
             });
         },
       });
